@@ -158,12 +158,18 @@ def breeding(mating_pool):
     return pop_vals
 
 
-# insertion step
-def insert(pop, kids):
+# insertion step (Now elitism based, keeps population the same size, takes best performing chromosomes)
+def insert(pop, kids, debug=False):
+    if debug:
+        print("pop:", pop)
+        print("kids:", kids)
     pop_size = len(pop)
-    total_pop = pop.extend(kids)
-    # TODO: Implement elitism-based elimination
-    return kids
+    pop.extend(kids)
+    pop.sort(key=lambda x: x[1])
+    pop = pop[:pop_size]
+    if debug:
+        print("elite:", pop)
+    return pop
 
 
 # perform a simple summary on the population: returns the best chromosome fitness,
@@ -182,12 +188,9 @@ def print_best_sol_in_pop(pop):
 
 
 def plot_population(pop):
-    # TODO: Implement plot_population
     x = [p[0][0] for p in pop]
     y = [p[0][1] for p in pop]
     evals = [p[1] for p in pop]
-    for p in pop:
-        print(p)
     plt.scatter(x, y, c=evals)
     plt.gray()
     plt.xlim([Schwefel_lower_bound, Schwefel_upper_bound])
@@ -197,21 +200,22 @@ def plot_population(pop):
 
 def genetic_algorithm_search(k=3):
     population = initialize_population()
-    plot_population(population)
+    #plot_population(population)
     for j in range(generations):
         mates = tournament_selection(population, k)
         offspring = breeding(mates)
         population = insert(population, offspring)
+        #plot_population(population)
 
         min_val, mean_val, var_val = summary_fitness(population)  # check out the population at each generation
-        print("Fitness Summary [Gen", j, "]", summary_fitness(population))
+        print("Fitness Summary [ Gen", j, "] Mean:", mean_val, "Min", min_val)
     print_best_sol_in_pop(population)
 
 
 dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
 population_size = 6  # size of GA population
-generations = 3  # number of GA generations
-cross_over_rate = 0.8
+generations = 1000  # number of GA generations
+cross_over_rate = 0.9
 mutation_rate = 0.2
 
 
