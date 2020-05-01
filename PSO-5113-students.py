@@ -74,5 +74,42 @@ pBestVal = curValue[:]  # initialize pbest to the starting position
 #Currently missing several elements
 #e.g., velocity update function; velocity max limitations; position updates; dealing with infeasible space; identifying the global best; main loop, stopping criterion, etc. 
                                                                           
+T = 500
+t = 0
+phi1 = 0.1 # how large or small should this constant be?
+phi2 = 0.1 # how large or small should this constant be?
+vel_Max = 100 # what's a good max velocity?
+pbestg = [] 
+
+# calculates a new velocity for all particles of the swarm
+# returns a new list of lists for velocities
+def update_vel(vel,pBest):
+      r1 = myPRNG.random()
+      r2 = myPRNG.random()
+      # update the velocity
+      for i in range(swarmSize):
+            for j in range(dimensions):
+                  vel_new = vel[i] + phi1*r1*(pBest[i] - pos[i]) + phi2*r2*(pBestg() - pos[i])
+                  # make sure the velocity for particle [i] isn't greater than the max velocity
+                  if vel_new > vel_MAX:
+                        vel[i] = vel_MAX
+                  else:
+                        vel[i]= vel_new
+
+# updates the positions of all particles and returns a list of lists  
+def update_pos(x,v):
+      for i in range(swarmSize):
+            for j in range(dimensions):
+                  pos[i] = pos[i] + vel[i]
+      return pos
+
+# Find the global best position
+def pBestg():
+      for i in range(swarmSize):
+            for j in range(dimensions):
+
+
+# Main loop       
+# while t < T:
 
 
