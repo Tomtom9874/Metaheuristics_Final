@@ -44,7 +44,6 @@ def evaluate(x):
                     
       return val          
       
-          
 
 #the swarm will be represented as a list of positions, velocities, values, pbest, and pbest values
 
@@ -72,14 +71,14 @@ pBestVal = curValue[:]  # initialize pbest to the starting position
 
 
 #Currently missing several elements
-#e.g., velocity update function; velocity max limitations; position updates; dealing with infeasible space; identifying the global best; main loop, stopping criterion, etc. 
-                                                                          
+#e.g., velocity update function; velocity max limitations; position updates; dealing with infeasible space; identifying the global best; main loop, stopping criterion, etc.                                                                           
 T = 500
 t = 0
 phi1 = 0.1 # how large or small should this constant be?
 phi2 = 0.1 # how large or small should this constant be?
 vel_Max = 100 # what's a good max velocity?
-pbestg = [] 
+pbestg = 0 
+
 
 # calculates a new velocity for all particles of the swarm
 # returns a new list of lists for velocities
@@ -96,6 +95,7 @@ def update_vel(vel,pBest):
                   else:
                         vel[i]= vel_new
 
+
 # updates the positions of all particles and returns a list of lists  
 def update_pos(x,v):
       for i in range(swarmSize):
@@ -103,10 +103,13 @@ def update_pos(x,v):
                   pos[i] = pos[i] + vel[i]
       return pos
 
+
 # Find the global best position
 def pBestg():
-      for i in range(swarmSize):
-            for j in range(dimensions):
+      for i in range(pbestVal):
+            if pbestVal[i] > pbestg:
+                  pbestg = pbestVal[i]
+      return pbestg
 
 
 # Main loop       
