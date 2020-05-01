@@ -158,18 +158,19 @@ def breeding(mating_pool):
     return pop_vals
 
 
-# insertion step (Now elitism based, keeps population the same size, takes best performing chromosomes)
-def insert(pop, kids, debug=False):
+# insertion step (Now elitism based, takes k best parents and population - k best kids)
+def insert(pop, kids, debug=False, k=5):
     if debug:
         print("pop:", pop)
         print("kids:", kids)
-    pop_size = len(pop)
-    pop.extend(kids)
     pop.sort(key=lambda x: x[1])
-    pop = pop[:pop_size]
+    kids.sort(key=lambda x: x[1])
+    elite_pop = pop[0:k]
+    elite_kids = kids[k:len(kids)]
+    elite_pop.extend(elite_kids)
     if debug:
-        print("elite:", pop)
-    return pop
+        print("elite:", elite_pop)
+    return elite_pop
 
 
 # perform a simple summary on the population: returns the best chromosome fitness,
@@ -183,6 +184,7 @@ def summary_fitness(pop):
 def print_best_sol_in_pop(pop):
     sol = pop[0]
     print("Best Chromosome:", sol)
+    print("Best Evaluation:", sol[1])
 
 # TODO: (Optional) Implement Text Output
 
@@ -198,29 +200,40 @@ def plot_population(pop):
     plt.show()
 
 
-def genetic_algorithm_search(k=3):
+def genetic_algorithm_search(k=3, do_print=False, elite_k=5):
     population = initialize_population()
     #plot_population(population)
     for j in range(generations):
         mates = tournament_selection(population, k)
         offspring = breeding(mates)
-        population = insert(population, offspring)
+        population = insert(population, offspring, k=elite_k)
         #plot_population(population)
 
         min_val, mean_val, var_val = summary_fitness(population)  # check out the population at each generation
-        print("Fitness Summary [ Gen", j, "] Mean:", mean_val, "Min", min_val)
+        if do_print:
+            print("Fitness Summary [ Gen", j, "] Mean:", mean_val, "Min", min_val)
+        else:
+            if j % 250 == 0:
+                print(j, "/", generations)
     print_best_sol_in_pop(population)
 
 
-dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
-population_size = 6  # size of GA population
-generations = 1000  # number of GA generations
-cross_over_rate = 0.9
+#dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
+#population_size = 6  # size of GA population
+#generations = 1000  # number of GA generations
+#cross_over_rate = 0.9
+#mutation_rate = 0.2
+
+dimensions = 200  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
+population_size = 30  # size of GA population
+generations = 2000  # number of GA generations
+cross_over_rate = 0.8
 mutation_rate = 0.2
 
 
 def main():
-    genetic_algorithm_search()
+    genetic_algorithm_search(elite_k=10)
+    print(76803.6833340198)
 
 
 if __name__ == '__main__':
