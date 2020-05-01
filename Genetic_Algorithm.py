@@ -6,6 +6,7 @@
 import math
 from random import Random
 import numpy as np
+from matplotlib import pyplot as plt
 
 # to setup a random number generator, we will specify a "seed" value
 seed = 5113
@@ -110,7 +111,6 @@ def tournament_selection(pop, k):
 
 # function to mutate solutions
 def mutate(x):
-    # TODO: Implement mutation function
     random_position = myPRNG.randint(0, len(x))
     x[random_position] = myPRNG.uniform(Schwefel_lower_bound, Schwefel_upper_bound)
     return x
@@ -160,6 +160,8 @@ def breeding(mating_pool):
 
 # insertion step
 def insert(pop, kids):
+    pop_size = len(pop)
+    total_pop = pop.extend(kids)
     # TODO: Implement elitism-based elimination
     return kids
 
@@ -173,36 +175,48 @@ def summary_fitness(pop):
 
 # the best solution should always be the first element... if I coded everything correctly...
 def print_best_sol_in_pop(pop):
-    print(pop[0])
+    sol = pop[0]
+    print("Best Chromosome:", sol)
 
 # TODO: (Optional) Implement Text Output
 
 
+def plot_population(pop):
+    # TODO: Implement plot_population
+    x = [p[0][0] for p in pop]
+    y = [p[0][1] for p in pop]
+    evals = [p[1] for p in pop]
+    for p in pop:
+        print(p)
+    plt.scatter(x, y, c=evals)
+    plt.gray()
+    plt.xlim([Schwefel_lower_bound, Schwefel_upper_bound])
+    plt.ylim([Schwefel_lower_bound, Schwefel_upper_bound])
+    plt.show()
+
+
 def genetic_algorithm_search(k=3):
     population = initialize_population()
-
+    plot_population(population)
     for j in range(generations):
         mates = tournament_selection(population, k)
         offspring = breeding(mates)
         population = insert(population, offspring)
 
         min_val, mean_val, var_val = summary_fitness(population)  # check out the population at each generation
-        print(summary_fitness(population))  # print to screen; turn this off for faster results
-    print(summary_fitness(population))
+        print("Fitness Summary [Gen", j, "]", summary_fitness(population))
     print_best_sol_in_pop(population)
 
 
 dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
 population_size = 6  # size of GA population
-generations = 1000  # number of GA generations
+generations = 3  # number of GA generations
 cross_over_rate = 0.8
 mutation_rate = 0.2
 
 
 def main():
-    # genetic_algorithm_search()
-    c = create_chromosome(2, Schwefel_lower_bound, Schwefel_upper_bound)
-
+    genetic_algorithm_search()
 
 
 if __name__ == '__main__':
