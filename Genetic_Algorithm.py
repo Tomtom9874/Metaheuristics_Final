@@ -24,17 +24,13 @@ dimensions = 200    # set dimensions for Schwefel Function search space (should 
 population_size = 10  # size of GA population
 generations = 100   # number of GA generations
 
-cross_over_rate = 0.8  # currently not used in the implementation; neeeds to be used.
-mutation_rate = 0.2   # currently not used in the implementation; neeeds to be used.
+cross_over_rate = 0.8  # currently not used in the implementation; needs to be used.
+mutation_rate = 0.2   # currently not used in the implementation; needs to be used.
 
 
 # create an continuous valued chromosome
 def create_chromosome(d, l_bound, u_bound):
-    x = []
-    for i in range(d):
-        x.append(myPRNG.uniform(l_bound, u_bound))   # creating a randomly located solution
-        
-    return x
+    return [myPRNG.uniform(l_bound, u_bound) for _ in range(d)]
 
 
 # create initial population
@@ -60,7 +56,6 @@ def initialize_population():  # n is size of population; d is dimensions of chro
 
 # implement a linear crossover
 def crossover(x1, x2):
-    
     d = len(x1)  # dimensions of solution
     
     # choose crossover point
@@ -68,7 +63,6 @@ def crossover(x1, x2):
     # the other portion be linear combo of the parents
         
     cross_over_pt = myPRNG.randint(1, d-1)  # I choose the crossover point where at least 1 element of parent is copied
-    
     beta = myPRNG.random()  # random number between 0 and 1
         
     # note: using numpy allows us to treat the lists as vectors
@@ -83,7 +77,6 @@ def crossover(x1, x2):
     else:
         offspring1 = new1[0:cross_over_pt] + x1[cross_over_pt:d]
         offspring2 = new2[0:cross_over_pt] + x2[cross_over_pt:d]
-    
     return offspring1, offspring2  # two offspring are returned
 
 
@@ -103,7 +96,6 @@ def rank_order(any_list):
     rank_ordered = [0] * len(any_list)
     for i, x in enumerate(sorted(range(len(any_list)), key=lambda y: any_list[y])):
         rank_ordered[x] = i
-
     return rank_ordered
 
 
@@ -127,15 +119,29 @@ def mutate(x):
     # TODO: Implement mutation function
     return x
 
-    
+
+def mutate(chromosome):
+    mutation_roll = myPRNG.random()
+    if mutation_roll < mutation_rate:
+        chromosome = mutate(chromosome)
+    return chromosome
+
+
 def breeding(mating_pool):
     # the parents will be the first two individuals, then next two, then next two and so on
     
     children = []
     children_fitness = []
     for i in range(0, population_size - 1, 2):
-        child1, child2 = crossover(mating_pool[i], mating_pool[i + 1])
-        
+
+        # Crossover
+        crossover_roll = myPRNG.random()
+        if crossover_roll < cross_over_rate:
+            child1, child2 = crossover(mating_pool[i], mating_pool[i + 1])
+        else:
+            child1, child2 = mating_pool[i], mating_pool[i + 1]
+
+        # Mutation (With mutation_rate)
         child1 = mutate(child1)
         child2 = mutate(child2)
         
@@ -176,16 +182,24 @@ def print_best_sol_in_pop(pop):
 # TODO: (Optional) Implement Text Output
 
 
-def main():
+def genetic_algorithm_search(k=3):
     population = initialize_population()
 
     for j in range(generations):
-        mates = tournament_selection(population, 3)
+        mates = tournament_selection(population, k)
         offspring = breeding(mates)
         population = insert(population, offspring)
 
         min_val, mean_val, var_val = summary_fitness(population)  # check out the population at each generation
-        print(summary_fitness(population))                 # print to screen; turn this off for faster results
+        print(summary_fitness(population))  # print to screen; turn this off for faster results
     print(summary_fitness(population))
     print_best_sol_in_pop(population)
 
+
+def main():
+    # genetic_algorithm_search()
+    print(create_chromosome(100, 0, 100))
+
+
+if __name__ == '__main__':
+    main()
