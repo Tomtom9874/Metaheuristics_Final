@@ -11,21 +11,15 @@ import numpy as np
 seed = 5113
 myPRNG = Random(seed)
 
-lowerBound = -500  # bounds for Schwefel Function search space
-upperBound = 500   # bounds for Schwefel Function search space
+Schwefel_lower_bound = -500  # bounds for Schwefel Function search space
+Schwefel_upper_bound = 500   # bounds for Schwefel Function search space
 
 # you may change anything below this line that you wish too ------------------------------------------------------------
 
 # Student name(s): Tom Welborn, Nik Frost
 # Date: 5/1/2020
 
-dimensions = 200    # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
-
-population_size = 10  # size of GA population
-generations = 100   # number of GA generations
-
-cross_over_rate = 0.8  # currently not used in the implementation; needs to be used.
-mutation_rate = 0.2   # currently not used in the implementation; needs to be used.
+# parameters moved to main function
 
 
 # create an continuous valued chromosome
@@ -39,7 +33,7 @@ def initialize_population():  # n is size of population; d is dimensions of chro
     population_fitness = []
     
     for i in range(population_size):
-        population.append(create_chromosome(dimensions, lowerBound, upperBound))
+        population.append(create_chromosome(dimensions, Schwefel_lower_bound, Schwefel_upper_bound))
         population_fitness.append(evaluate(population[i]))
         
     temp_zip = zip(population, population_fitness)
@@ -117,13 +111,15 @@ def tournament_selection(pop, k):
 # function to mutate solutions
 def mutate(x):
     # TODO: Implement mutation function
+    random_position = myPRNG.randint(0, len(x))
+    x[random_position] = myPRNG.uniform(Schwefel_lower_bound, Schwefel_upper_bound)
     return x
 
 
-def mutate(chromosome):
+def probabilistic_mutate(chromosome):
     mutation_roll = myPRNG.random()
     if mutation_roll < mutation_rate:
-        chromosome = mutate(chromosome)
+        chromosome = probabilistic_mutate(chromosome)
     return chromosome
 
 
@@ -142,8 +138,8 @@ def breeding(mating_pool):
             child1, child2 = mating_pool[i], mating_pool[i + 1]
 
         # Mutation (With mutation_rate)
-        child1 = mutate(child1)
-        child2 = mutate(child2)
+        child1 = probabilistic_mutate(child1)
+        child2 = probabilistic_mutate(child2)
         
         children.append(child1)
         children.append(child2)
@@ -196,9 +192,17 @@ def genetic_algorithm_search(k=3):
     print_best_sol_in_pop(population)
 
 
+dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
+population_size = 6  # size of GA population
+generations = 1000  # number of GA generations
+cross_over_rate = 0.8
+mutation_rate = 0.2
+
+
 def main():
     # genetic_algorithm_search()
-    print(create_chromosome(100, 0, 100))
+    c = create_chromosome(2, Schwefel_lower_bound, Schwefel_upper_bound)
+
 
 
 if __name__ == '__main__':
