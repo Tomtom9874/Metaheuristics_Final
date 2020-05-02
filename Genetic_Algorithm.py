@@ -32,12 +32,14 @@ def create_chromosome(d, l_bound, u_bound):
 def initialize_population():  # n is size of population; d is dimensions of chromosome
     population = []
     population_fitness = []
+    population_objective = []
     
     for i in range(population_size):
         population.append(create_chromosome(dimensions, Schwefel_lower_bound, Schwefel_upper_bound))
         population_fitness.append(evaluate(population[i], generations))
+        population_objective.append(objective(population[i]))
         
-    temp_zip = zip(population, population_fitness)
+    temp_zip = zip(population, population_fitness, population_objective)
     pop_vals = sorted(temp_zip, key=lambda x: x[1])
     
     # the return object is a sorted list of tuples:
@@ -132,6 +134,7 @@ def breeding(mating_pool, current_generation):
     
     children = []
     children_fitness = []
+    children_evaluation = []
     for i in range(0, population_size - 1, 2):
 
         # Crossover
@@ -151,8 +154,11 @@ def breeding(mating_pool, current_generation):
         fitness_scale = generations - current_generation
         children_fitness.append(evaluate(child1, a=fitness_scale))
         children_fitness.append(evaluate(child2, a=fitness_scale))
-        
-    temp_zip = zip(children, children_fitness)
+
+        children_evaluation.append(objective(child1))
+        children_evaluation.append(objective(child2))
+
+    temp_zip = zip(children, children_fitness, children_evaluation)
     pop_vals = sorted(temp_zip, key=lambda x: x[1])
         
     # the return object is a sorted list of tuples:
@@ -180,8 +186,11 @@ def insert(pop, kids, debug=False, k=5):
 
 # perform a simple summary on the population: returns the best chromosome fitness,
 # the average population fitness, and the variance of the population fitness
-def summary_fitness(pop):
-    a = np.array(list(zip(*pop))[1])
+def summary_fitness(pop, true_objective=False):
+    if true_objective:
+        a = np.array(list(zip(*pop))[2])
+    else:
+        a = np.array(list(zip(*pop))[1])
     return np.min(a), np.mean(a), np.var(a)
 
 
@@ -203,21 +212,39 @@ def plot_population(pop):
     plt.show()
 
 
+def plot_solutions(solutions):
+    means = [x[1] for x in solutions]
+    variations = [x[2] for x in solutions]
+    x = list(range(generations + 1))
+
+    plt.errorbar(x, means, yerr=variations, ecolor="grey", color="black")
+    plt.ylim(min(means) - 1000, max(means) + 1000)
+    plt.title("Objective Value by Generation")
+    plt.xlabel("Generation")
+    plt.ylabel("Mean Objective Value")
+    plt.show()
+
+
 def genetic_algorithm_search(k=3, do_print=False, elite_k=5):
     population = initialize_population()
+    summaries = []
+    summary = summary_fitness(population, true_objective=True)
+    summaries.append(summary)
     #plot_population(population)
     for j in range(generations):
         mates = tournament_selection(population, k)
         offspring = breeding(mates, j)
         population = insert(population, offspring, k=elite_k)
         #plot_population(population)
-
+        summary = summary_fitness(population, true_objective=True)
+        summaries.append(summary)
         min_val, mean_val, var_val = summary_fitness(population)  # check out the population at each generation
         if do_print:
             print("Fitness Summary [ Gen", j, "] Mean:", mean_val, "Min", min_val)
         else:
             if j % 250 == 0:
                 print(j, "/", generations)
+    plot_solutions(summaries)
     print_best_sol_in_pop(population)
 
 
