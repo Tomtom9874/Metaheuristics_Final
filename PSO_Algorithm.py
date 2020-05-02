@@ -44,7 +44,7 @@ def evaluate(x):
     val = 0
     for d in range(num_dimensions):
         val = val + x[d]*math.sin(math.sqrt(abs(x[d])))
-        val = 418.9829*num_dimensions - val
+    val = 418.9829*num_dimensions - val
     return val
       
 
@@ -95,8 +95,9 @@ def update_vel():
             local_distance = pbest[ant][d] - pos[ant][d]  # Distance from personal best position
             global_distance = pbestg[d] - pos[ant][d]  # Distance from global best position
             vel_new = vel[ant][d] + phi1 * r1 * local_distance + phi2 * r2 * global_distance
-            print("Local best - current", local_distance, "Global best - current", global_distance)
-            print(vel_new)
+            #print("Local best - current", local_distance, "Global best - current", global_distance)
+            #print(vel_new)
+            #print(pos[ant])
             # Make sure each updated velocity is within the MIN & MAX bounds
             if vel_new < VEL_MIN:
                 vel[ant][d] = VEL_MIN
@@ -110,7 +111,13 @@ def update_vel():
 def update_pos():
     for ant in range(swarmSize):
         for d in range(num_dimensions):
-            pos[ant][d] += vel[ant][d]
+            new_position = pos[ant][d] + vel[ant][d]
+            if new_position < lowerBound:
+                pos[ant][d] = lowerBound
+            elif new_position > upperBound:
+                pos[ant][d] = upperBound
+            else:
+                pos[ant][d] = new_position
 
 
 # Find the global best position
