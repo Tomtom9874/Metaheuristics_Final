@@ -118,6 +118,9 @@ def update_pos():
                 pos[ant][d] = upperBound
             else:
                 pos[ant][d] = new_position
+            pos[ant][d] += vel[ant][d]
+
+
 
 
 # Find the global best position
