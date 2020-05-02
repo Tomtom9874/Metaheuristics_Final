@@ -6,6 +6,7 @@
 import math
 from random import Random
 import numpy as np
+from matplotlib import pyplot as plt
 
 # to setup a random number generator, we will specify a "seed" value
 seed = 5113
@@ -34,7 +35,7 @@ def initialize_population():  # n is size of population; d is dimensions of chro
     
     for i in range(population_size):
         population.append(create_chromosome(dimensions, Schwefel_lower_bound, Schwefel_upper_bound))
-        population_fitness.append(evaluate(population[i]))
+        population_fitness.append(evaluate(population[i], generations))
         
     temp_zip = zip(population, population_fitness)
     pop_vals = sorted(temp_zip, key=lambda x: x[1])
@@ -75,7 +76,7 @@ def crossover(x1, x2):
 
 
 # function to evaluate the Schwefel Function for d dimensions
-def evaluate(x):  
+def objective(x):
     val = 0
     d = len(x)
     for i in range(d):
@@ -83,6 +84,10 @@ def evaluate(x):
     val = 418.9829*d - val
     return val             
   
+
+def evaluate(x, a=0, b=1):
+    return a + objective(x) * b
+
 
 # function to provide the rank order of fitness values in a list
 # not currently used in the algorithm, but provided in case you want to...
@@ -110,7 +115,6 @@ def tournament_selection(pop, k):
 
 # function to mutate solutions
 def mutate(x):
-    # TODO: Implement mutation function
     random_position = myPRNG.randint(0, len(x))
     x[random_position] = myPRNG.uniform(Schwefel_lower_bound, Schwefel_upper_bound)
     return x
@@ -123,7 +127,7 @@ def probabilistic_mutate(chromosome):
     return chromosome
 
 
-def breeding(mating_pool):
+def breeding(mating_pool, current_generation):
     # the parents will be the first two individuals, then next two, then next two and so on
     
     children = []
@@ -143,9 +147,10 @@ def breeding(mating_pool):
         
         children.append(child1)
         children.append(child2)
-        
-        children_fitness.append(evaluate(child1))
-        children_fitness.append(evaluate(child2))
+
+        fitness_scale = generations - current_generation
+        children_fitness.append(evaluate(child1, a=fitness_scale))
+        children_fitness.append(evaluate(child2, a=fitness_scale))
         
     temp_zip = zip(children, children_fitness)
     pop_vals = sorted(temp_zip, key=lambda x: x[1])
@@ -158,10 +163,19 @@ def breeding(mating_pool):
     return pop_vals
 
 
-# insertion step
-def insert(pop, kids):
-    # TODO: Implement elitism-based elimination
-    return kids
+# insertion step (Now elitism based, takes k best parents and population - k best kids)
+def insert(pop, kids, debug=False, k=5):
+    if debug:
+        print("pop:", pop)
+        print("kids:", kids)
+    pop.sort(key=lambda x: x[1])
+    kids.sort(key=lambda x: x[1])
+    elite_pop = pop[:k]
+    elite_kids = kids[:len(kids) - k]
+    elite_pop.extend(elite_kids)
+    if debug:
+        print("elite:", elite_pop)
+    return elite_pop
 
 
 # perform a simple summary on the population: returns the best chromosome fitness,
@@ -173,36 +187,58 @@ def summary_fitness(pop):
 
 # the best solution should always be the first element... if I coded everything correctly...
 def print_best_sol_in_pop(pop):
-    print(pop[0])
+    sol = pop[0]
+    print("Best Chromosome:", sol)
+    print("Best Evaluation:", sol[1])
 
-# TODO: (Optional) Implement Text Output
+
+def plot_population(pop):
+    x = [p[0][0] for p in pop]
+    y = [p[0][1] for p in pop]
+    evals = [p[1] for p in pop]
+    plt.scatter(x, y, c=evals)
+    plt.gray()
+    plt.xlim([Schwefel_lower_bound, Schwefel_upper_bound])
+    plt.ylim([Schwefel_lower_bound, Schwefel_upper_bound])
+    plt.show()
 
 
-def genetic_algorithm_search(k=3):
+def genetic_algorithm_search(k=3, do_print=False, elite_k=5):
     population = initialize_population()
-
+    #plot_population(population)
     for j in range(generations):
         mates = tournament_selection(population, k)
-        offspring = breeding(mates)
-        population = insert(population, offspring)
+        offspring = breeding(mates, j)
+        population = insert(population, offspring, k=elite_k)
+        #plot_population(population)
 
         min_val, mean_val, var_val = summary_fitness(population)  # check out the population at each generation
-        print(summary_fitness(population))  # print to screen; turn this off for faster results
-    print(summary_fitness(population))
+        if do_print:
+            print("Fitness Summary [ Gen", j, "] Mean:", mean_val, "Min", min_val)
+        else:
+            if j % 250 == 0:
+                print(j, "/", generations)
     print_best_sol_in_pop(population)
 
 
-dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
-population_size = 6  # size of GA population
-generations = 1000  # number of GA generations
-cross_over_rate = 0.8
-mutation_rate = 0.2
+#dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
+#population_size = 6  # size of GA population
+#generations = 1000  # number of GA generations
+#cross_over_rate = 0.9
+#mutation_rate = 0.2
+
+dimensions = 200  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
+
+# Parameters (Best found in parenthesis)
+population_size = 300  # size of GA population (300)
+generations = 1000  # number of GA generations (1000)
+cross_over_rate = 0.9  # (0.9)
+mutation_rate = 0.25  # (0.25)
 
 
 def main():
-    # genetic_algorithm_search()
-    c = create_chromosome(2, Schwefel_lower_bound, Schwefel_upper_bound)
-
+    genetic_algorithm_search(elite_k=10)
+    print("Global Best:", 67734.73069639696)
 
 
 if __name__ == '__main__':
