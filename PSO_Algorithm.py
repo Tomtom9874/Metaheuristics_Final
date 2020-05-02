@@ -92,8 +92,10 @@ def update_vel(pbestg):
     for ant in range(swarmSize):
         for d in range(num_dimensions):
             # We need to assign the velocity by dimension rather than the whole thing at once.
-            vel_new = vel[ant][d] + phi1*r1*(pbest[ant][d] - pos[ant][d]) + phi2*r2*(pbestg[d] - pos[ant][d])
-            print("Local best - current",(pbest[ant][d] - pos[ant][d]),"Global best - current",(pbestg[d] - pos[ant][d]))
+            local_distance = pbest[ant][d] - pos[ant][d]  # Distance from personal best position
+            global_distance = pbestg[d] - pos[ant][d]  # Distance from global best position
+            vel_new = vel[ant][d] + phi1 * r1 * local_distance + phi2 * r2 * global_distance
+            print("Local best - current", local_distance, "Global best - current", global_distance)
             print(vel_new)
             # Make sure each updated velocity is within the MIN & MAX bounds
             if vel_new < VEL_MIN:
@@ -132,6 +134,7 @@ def find_global_p_best():
 # Main loop
 def particle_swarm_optimization():
     t = 0
+    pbestg = find_global_p_best()
     while t < T:  
         for ant in range(swarmSize):
             curValue[ant] = evaluate(pos[ant])
