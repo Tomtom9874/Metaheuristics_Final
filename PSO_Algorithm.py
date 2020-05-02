@@ -34,8 +34,8 @@ swarmSize = 10          # number of particles in swarm
 T = 500                 # Number of iterations
 phi1 = 0.1              # how large or small should this constant be?
 phi2 = 0.1              # how large or small should this constant be?
-VEL_MAX = 10           # what's a good max velocity?
-VEL_MIN = -10          # what's a good min velocity?
+VEL_MAX = 20           # what's a good max velocity?
+VEL_MIN = -20          # what's a good min velocity?
 
       
 # Schwefel function to evaluate a real-valued solution x
@@ -93,7 +93,7 @@ def update_vel(pbestg):
         for d in range(num_dimensions):
             # We need to assign the velocity by dimension rather than the whole thing at once.
             vel_new = vel[ant][d] + phi1*r1*(pbest[ant][d] - pos[ant][d]) + phi2*r2*(pbestg[d] - pos[ant][d])
-            
+            print(vel_new)
             # Make sure each updated velocity is within the MIN & MAX bounds
             if vel_new < VEL_MIN:
                 vel[ant][d] = VEL_MIN
@@ -118,9 +118,11 @@ def update_pos():
 def find_global_p_best():
     return_p = pbestg
     for ant in range(swarmSize):
+        # decreasing to 0
         if evaluate(pbestg) > 0:
             if pbestVal[ant] < evaluate(pbestg):
                 return_p = pbest[ant]
+        # increasing to 0
         else:
             if evaluate(pbestg) > evaluate(pbestg):
                 return_p = pbest[ant]
@@ -134,13 +136,13 @@ def particle_swarm_optimization():
         for ant in range(swarmSize):
             curValue[ant] = evaluate(pos[ant])
             # for negative values we need to increase towards 0
-            if pbestVal[ant] < 0:
-                if curValue[ant] > pbestVal[ant]:
+            if pbestVal[ant] > 0:
+                if curValue[ant] < pbestVal[ant]:
                     pbestVal[ant] = curValue[ant]
                     pbest[ant] = pos[ant]
             # for positive values we need to increase towards 0
             else:
-                if curValue[ant] < pbestVal[ant]:
+                if curValue[ant] > pbestVal[ant]:
                     pbestVal[ant] = curValue[ant]
                     pbest[ant] = pos[ant]
         # find the global best position        
