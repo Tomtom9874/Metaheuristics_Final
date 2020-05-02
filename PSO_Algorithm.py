@@ -110,16 +110,8 @@ def update_vel():
 def update_pos():
     for ant in range(swarmSize):
         for d in range(num_dimensions):
-<<<<<<< HEAD
-<<<<<<< HEAD
-            pos[ant] = pos[ant] + vel[ant]
+            pos[ant][d] += vel[ant][d]
     return pos
-=======
-            pos[ant][d] += vel[ant][d]
->>>>>>> 2a39636afe0822b4ac6bd692e9231f55ae1f418e
-=======
-            pos[ant][d] += vel[ant][d]
->>>>>>> 2a39636afe0822b4ac6bd692e9231f55ae1f418e
 
 
 # Find the global best position
