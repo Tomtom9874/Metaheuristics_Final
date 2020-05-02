@@ -93,6 +93,7 @@ def update_vel(pbestg):
         for d in range(num_dimensions):
             # We need to assign the velocity by dimension rather than the whole thing at once.
             vel_new = vel[ant][d] + phi1*r1*(pbest[ant][d] - pos[ant][d]) + phi2*r2*(pbestg[d] - pos[ant][d])
+            print("Local best - current",(pbest[ant][d] - pos[ant][d]),"Global best - current",(pbestg[d] - pos[ant][d]))
             print(vel_new)
             # Make sure each updated velocity is within the MIN & MAX bounds
             if vel_new < VEL_MIN:
@@ -101,13 +102,12 @@ def update_vel(pbestg):
                 vel[ant][d] = VEL_MAX
             else:
                 vel[ant][d] = vel_new
-            #vel[ant][d] = min(VEL_MAX, vel_new)  # This does the same thing as the if else.
 
     return vel
 
 
 # updates the positions of all particles and returns a list of lists  
-def update_pos():
+def update_pos(vel):
     for ant in range(swarmSize):
         for _ in range(num_dimensions):
             pos[ant] = pos[ant] + vel[ant]
@@ -132,7 +132,7 @@ def find_global_p_best():
 # Main loop
 def particle_swarm_optimization():
     t = 0
-    while t < T:
+    while t < T:  
         for ant in range(swarmSize):
             curValue[ant] = evaluate(pos[ant])
             # for negative values we need to increase towards 0
@@ -145,11 +145,11 @@ def particle_swarm_optimization():
                 if curValue[ant] > pbestVal[ant]:
                     pbestVal[ant] = curValue[ant]
                     pbest[ant] = pos[ant]
-        # find the global best position        
+        # find the global best position
         pbestg = find_global_p_best()
         # update velocities and positions of all particles
-        update_vel(pbestg)
-        update_pos()
+        vel = update_vel(pbestg)
+        update_pos(vel)              
         t += 1
         print("\nTotal number of solutions checked: ", t)
         print("Best value found so far: ", evaluate(pbestg))
