@@ -136,9 +136,11 @@ def particle_swarm_optimization():
             if pbestVal[ant] < 0:
                 if curValue[ant] > pbestVal[ant]:
                     pbestVal[ant] = curValue[ant]
+                    pbest[ant] = pos[ant]
             else:
                 if curValue[ant] < pbestVal[ant]:
                     pbestVal[ant] = curValue[ant]
+                    pbest[ant] = pos[ant]
         # find the global best position        
         pbestg = find_global_p_best()
         # update velocities and positions of all particles
