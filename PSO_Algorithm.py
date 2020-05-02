@@ -34,7 +34,8 @@ swarmSize = 10          # number of particles in swarm
 T = 500                 # Number of iterations
 phi1 = 0.1              # how large or small should this constant be?
 phi2 = 0.1              # how large or small should this constant be?
-VEL_MAX = 10000         # what's a good max velocity?
+VEL_MAX = 10           # what's a good max velocity?
+VEL_MIN = -10          # what's a good min velocity?
 
       
 # Schwefel function to evaluate a real-valued solution x
@@ -79,12 +80,12 @@ pbestVal = curValue[:]                                          # initialize pbe
 # e.g., velocity update function; velocity max limitations; position updates; dealing with infeasible space;
 # identifying the global best; main loop, stopping criterion, etc.
 
-pbestg = [0, 0]
+pbestg = pbest[0]
 
 
 # calculates a new velocity for all particles of the swarm
 # returns a new list of lists for velocities
-def update_vel():
+def update_vel(pbestg):
     r1 = myPRNG.random()
     r2 = myPRNG.random()
     # update the velocity
@@ -92,7 +93,15 @@ def update_vel():
         for d in range(num_dimensions):
             # We need to assign the velocity by dimension rather than the whole thing at once.
             vel_new = vel[ant][d] + phi1*r1*(pbest[ant][d] - pos[ant][d]) + phi2*r2*(pbestg[d] - pos[ant][d])
-            vel[ant][d] = min(VEL_MAX, vel_new)  # This does the same thing as the if else.
+            
+            # Make sure each updated velocity is within the MIN & MAX bounds
+            if vel_new < VEL_MIN:
+                vel[ant][d] = VEL_MIN
+            elif vel_new > VEL_MAX:
+                vel[ant][d] = VEL_MAX
+            else:
+                vel[ant][d] = vel_new
+            #vel[ant][d] = min(VEL_MAX, vel_new)  # This does the same thing as the if else.
 
     return vel
 
@@ -109,8 +118,12 @@ def update_pos():
 def find_global_p_best():
     return_p = pbestg
     for ant in range(swarmSize):
-        if pbestVal[ant] > evaluate(pbestg):
-            return_p = pbest[ant]
+        if pbestVal[ant] > 0:
+            if pbestVal[ant] < evaluate(pbestg):
+                return_p = pbest[ant]
+        else:
+            if pbestVal[ant] > evaluate(pbestg):
+                return_p = pbest[ant]
     return return_p
 
 
@@ -122,8 +135,11 @@ def particle_swarm_optimization():
             curValue[ant] = evaluate(pos[ant])
             if curValue[ant] > pbestVal[ant]:
                 pbestVal[ant] = curValue[ant]
-
-        update_vel()
+        # find the global best position        
+        pbestg = find_global_p_best()
+        print(pbestg)
+        # update velocities and positions of all particles
+        update_vel(pbestg)
         update_pos()
         t += 1
         print("\nTotal number of solutions checked: ", t)
