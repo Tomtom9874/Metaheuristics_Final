@@ -118,11 +118,11 @@ def update_pos():
 def find_global_p_best():
     return_p = pbestg
     for ant in range(swarmSize):
-        if pbestVal[ant] > 0:
+        if evaluate(pbestg) > 0:
             if pbestVal[ant] < evaluate(pbestg):
                 return_p = pbest[ant]
         else:
-            if pbestVal[ant] > evaluate(pbestg):
+            if evaluate(pbestg) > evaluate(pbestg):
                 return_p = pbest[ant]
     return return_p
 
@@ -133,10 +133,12 @@ def particle_swarm_optimization():
     while t < T:
         for ant in range(swarmSize):
             curValue[ant] = evaluate(pos[ant])
+            # for negative values we need to increase towards 0
             if pbestVal[ant] < 0:
                 if curValue[ant] > pbestVal[ant]:
                     pbestVal[ant] = curValue[ant]
                     pbest[ant] = pos[ant]
+            # for positive values we need to increase towards 0
             else:
                 if curValue[ant] < pbestVal[ant]:
                     pbestVal[ant] = curValue[ant]
