@@ -31,11 +31,11 @@ upperBound = 500   # bounds for Schwefel Function search space
 # Parameters
 num_dimensions = 2      # number of dimensions of problem
 swarmSize = 10          # number of particles in swarm
-T = 1000                 # Number of iterations
+T = 10000                 # Number of iterations
 phi1 = 0.01              # how large or small should this constant be?
 phi2 = 0.01              # how large or small should this constant be?
-VEL_MAX = 2           # what's a good max velocity?
-VEL_MIN = -2          # what's a good min velocity?
+VEL_MAX = 1.1           # what's a good max velocity?
+VEL_MIN = -1.1          # what's a good min velocity?
 
       
 # Schwefel function to evaluate a real-valued solution x
@@ -68,7 +68,7 @@ pbestVal = []   # value of pbest position  -- will be a list of real values: pbe
 for i in range(swarmSize):
     for j in range(num_dimensions):
         pos[i].append(myPRNG.uniform(lowerBound, upperBound))   # assign random value between lower and upper bounds
-        vel[i].append(myPRNG.uniform(-1, 1))                    # assign random value between -1 and 1 --- maybe these are good bounds?  maybe not...
+        vel[i].append(myPRNG.uniform(-1,1))                    # assign random value between -1 and 1 --- maybe these are good bounds?  maybe not...
         
     curValue.append(evaluate(pos[i]))                           # evaluate the current position
                                                  
@@ -109,6 +109,7 @@ def update_pos():
     for ant in range(swarmSize):
         for d in range(num_dimensions):
             new_position = pos[ant][d] + vel[ant][d]
+            #
             if new_position > upperBound:
                 pos[ant][d] = pos[ant][d] - vel[ant][d]
             elif new_position < lowerBound:
@@ -137,8 +138,8 @@ def particle_swarm_optimization():
             # need to assert that the position is within the feasible region
             # before adding it to the pbest list
             if curValue[ant] < pbestVal[ant]:
-                pbestVal[ant] = curValue[ant]
                 pbest[ant] = pos[ant]
+                pbestVal[ant] = curValue[ant]
 
         # update velocities and positions of all particles
         pbestg = find_global_p_best()
