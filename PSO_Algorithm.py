@@ -85,7 +85,7 @@ pbestg = pbest[0]
 
 # calculates a new velocity for all particles of the swarm
 # returns a new list of lists for velocities
-def update_vel(pbestg):
+def update_vel():
     r1 = myPRNG.random()
     r2 = myPRNG.random()
     # update the velocity
@@ -105,15 +105,12 @@ def update_vel(pbestg):
             else:
                 vel[ant][d] = vel_new
 
-    return vel
-
 
 # updates the positions of all particles and returns a list of lists  
-def update_pos(vel):
+def update_pos():
     for ant in range(swarmSize):
-        for _ in range(num_dimensions):
-            pos[ant] = pos[ant] + vel[ant]
-    return pos
+        for d in range(num_dimensions):
+            pos[ant][d] += vel[ant][d]
 
 
 # Find the global best position
@@ -134,7 +131,6 @@ def find_global_p_best():
 # Main loop
 def particle_swarm_optimization():
     t = 0
-    pbestg = find_global_p_best()
     while t < T:  
         for ant in range(swarmSize):
             curValue[ant] = evaluate(pos[ant])
@@ -148,11 +144,10 @@ def particle_swarm_optimization():
                 if curValue[ant] > pbestVal[ant]:
                     pbestVal[ant] = curValue[ant]
                     pbest[ant] = pos[ant]
-        # find the global best position
-        pbestg = find_global_p_best()
+
         # update velocities and positions of all particles
-        vel = update_vel(pbestg)
-        update_pos(vel)              
+        update_vel()
+        update_pos()
         t += 1
         print("\nTotal number of solutions checked: ", t)
         print("Best value found so far: ", evaluate(pbestg))
