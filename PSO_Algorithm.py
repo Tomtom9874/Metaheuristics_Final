@@ -34,8 +34,8 @@ swarmSize = 10          # number of particles in swarm
 T = 500                 # Number of iterations
 phi1 = 0.1              # how large or small should this constant be?
 phi2 = 0.1              # how large or small should this constant be?
-VEL_MAX = 20           # what's a good max velocity?
-VEL_MIN = -20          # what's a good min velocity?
+VEL_MAX = 10           # what's a good max velocity?
+VEL_MIN = -10          # what's a good min velocity?
 
       
 # Schwefel function to evaluate a real-valued solution x
@@ -68,7 +68,7 @@ pbestVal = []   # value of pbest position  -- will be a list of real values: pbe
 for i in range(swarmSize):
     for j in range(num_dimensions):
         pos[i].append(myPRNG.uniform(lowerBound, upperBound))   # assign random value between lower and upper bounds
-        vel[i].append(myPRNG.uniform(-1, 1))                    # assign random value between -1 and 1 --- maybe these are good bounds?  maybe not...
+        vel[i].append(myPRNG.uniform(-10, 10))                    # assign random value between -1 and 1 --- maybe these are good bounds?  maybe not...
         
     curValue.append(evaluate(pos[i]))                           # evaluate the current position
                                                  
