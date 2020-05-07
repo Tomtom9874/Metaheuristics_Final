@@ -31,11 +31,11 @@ upperBound = 500   # bounds for Schwefel Function search space
 # Parameters
 num_dimensions = 2      # number of dimensions of problem
 swarmSize = 10          # number of particles in swarm
-T = 10000                 # Number of iterations
-phi1 = 0.01              # how large or small should this constant be?
-phi2 = 0.01              # how large or small should this constant be?
-VEL_MAX = 1.1           # what's a good max velocity?
-VEL_MIN = -1.1          # what's a good min velocity?
+T = 1000                # Number of iterations
+phi1 = 0.1              # how large or small should this constant be?
+phi2 = 0.1              # how large or small should this constant be?
+VEL_MAX = 1.5           # what's a good max velocity?
+VEL_MIN = -1.5          # what's a good min velocity?
 
       
 # Schwefel function to evaluate a real-valued solution x
@@ -79,8 +79,7 @@ pbestVal = curValue[:]                                          # initialize pbe
 # Currently missing several elements
 # e.g., velocity update function; velocity max limitations; position updates; dealing with infeasible space;
 # identifying the global best; main loop, stopping criterion, etc.
-
-pbestg = pbest[3]
+pbestg = pbest[0]
 
 
 # calculates a new velocity for all particles of the swarm
@@ -124,7 +123,7 @@ def find_global_p_best():
     return_p = pbestg
     for ant in range(swarmSize):
         if pbestVal[ant] < evaluate(pbestg):
-            retrun_p = pbest[ant]
+            return_p = pbest[ant]
         
     return return_p
 
