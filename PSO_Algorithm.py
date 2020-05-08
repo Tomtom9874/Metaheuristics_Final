@@ -145,10 +145,15 @@ class Swarm:
 
     def global_optimize(self):
         #plot_positions(t)
+=======
+    def global_optimize(self):
+
+        self.plot_positions(0)
+
+>>>>>>> 5c2dbe9a943110935168f8fa66fab50d842488e1
         for t in range(NUM_ITERATIONS):
             if t % PRINT_EVERY == 0:
                 self.print_update(t)
-
             # update velocities and positions of all particles
             for particle in self.particles:
                 particle.update_position()
@@ -156,6 +161,10 @@ class Swarm:
             self.set_global_p_best()
 
             #self.plot_positions(t)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5c2dbe9a943110935168f8fa66fab50d842488e1
             # plot_positions(t)
         self.print_final_update()
 
@@ -172,7 +181,6 @@ class Swarm:
                 self.print_update(t)
             for particle in self.particles:
                 particle.update_position()
-                particle.update_velocity(particle.get_n_best())  # Uses neighbroing best instead of global.
             self.set_global_p_best()
         self.print_final_update()
 
@@ -199,8 +207,6 @@ def evaluate(x):
 
 def main():
     swarm = Swarm()
-    #swarm.global_optimize()
-    swarm.neighbor_optimize()
 
 
 if __name__ == '__main__':
