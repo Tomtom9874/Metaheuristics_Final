@@ -41,6 +41,7 @@ Best solution = 56,0119.57720359191
 """
 
 # Parameters
+<<<<<<< HEAD
 NUM_DIMENSIONS = 2          # number of dimensions of problem
 SWARM_SIZE = 5              # number of particles in swarm
 NUM_ITERATIONS = 1800       # Number of iterations
@@ -50,17 +51,41 @@ VELOCITY = 0.8              # Max Velocity
 VEL_MAX = VELOCITY
 VEL_MIN = -VELOCITY
 PRINT_EVERY = 100           # Summary output every x iterations
+=======
+NUM_DIMENSIONS = 200        # number of dimensions of problem
+SWARM_SIZE = 10              # number of particles in swarm
+NUM_ITERATIONS = 500        # Number of iterations  (500)
+PHI_1 = 0.8                  # Local Weight  (0.8)
+PHI_2 = 0.1                 # Global Weight (0.1)
+VELOCITY = 3                # Max Velocity (5)
+VEL_MAX = VELOCITY
+VEL_MIN = -VELOCITY
+PRINT_EVERY = 100           # Summary output every x iterations
+# Best Solution=72293.80333221065
+>>>>>>> 415794de1a222e2142bbdba9af19779bb228f29f
 
 
 class Particle:
     def __init__(self):
         self.position = [myPRNG.uniform(LOWER_BOUND, UPPER_BOUND) for _ in range(NUM_DIMENSIONS)]
         self.velocity = [myPRNG.uniform(-VELOCITY, VELOCITY) for _ in range(NUM_DIMENSIONS)]
-        self.p_best = self.position[:]
+        self.p_best = self.position[:]  # Personal best position seen
         self.val_best = evaluate(self.p_best)
+        self.n_best = None  # Best position found in neighborhood.
+        self.n_best_val = float("inf")
+        self.neighbors = None
+
+    def get_n_best(self):
+        return self.n_best
+
+    def set_neighbors(self, neighbors):
+        self.neighbors = neighbors
 
     def get_position(self):
         return self.position
+
+    def get_p_best(self):
+        return self.p_best
 
     def get_value_best(self):
         return self.val_best
@@ -95,6 +120,14 @@ class Particle:
             else:
                 self.set_position(new_position, d)
 
+    def meet_neighbors(self):
+        # Gets the lowest evaluation of all the neighbors.
+        neighbor_positions = [p.get_p_best() for p in self.neighbors]
+        n_best = min(neighbor_positions, key=lambda x: evaluate(x))
+        if evaluate(n_best) < self.n_best_val:
+            self.n_best = n_best
+            self.n_best_val = evaluate(n_best)
+
 
 class Swarm:
     def __init__(self):
@@ -107,7 +140,7 @@ class Swarm:
     def set_global_p_best(self):
         for p in self.particles:
             if p.get_value_best() < self.g_best_val:
-                self.g_best = p.get_position()
+                self.g_best = p.get_p_best()
                 self.g_best_val = p.get_value_best()
 
     def plot_positions(self, generation):
@@ -119,14 +152,17 @@ class Swarm:
         plt.ylabel("y Coordinate")
         plt.show()
 
+<<<<<<< HEAD
     def optimize(self):
         #self.plot_positions(t)
+=======
+    def global_optimize(self):
+        # plot_positions(t)
+>>>>>>> 415794de1a222e2142bbdba9af19779bb228f29f
         for t in range(NUM_ITERATIONS):
             if t % PRINT_EVERY == 0:
-                print(t, "/", NUM_ITERATIONS)
-                print("\nTotal number of solutions checked: ", t * SWARM_SIZE)
-                print("Best value found so far: ", self.g_best_val)
-                print("Best position found so far: ", self.g_best)
+
+                self.print_update(t)
 
             # update velocities and positions of all particles
             for particle in self.particles:
@@ -134,10 +170,40 @@ class Swarm:
                 particle.update_velocity(self.g_best)
             self.set_global_p_best()
 
+<<<<<<< HEAD
             #self.plot_positions(t)
+=======
+            # plot_positions(t)
+        self.print_final_update()
+
+    def neighbor_optimize(self):
+        # Set Neighbors
+        self.particles[-1].set_neighbors([self.particles[0]])
+        for p in range(0, len(self.particles) - 1):
+            self.particles[p].set_neighbors([self.particles[p + 1]])
+        for p in self.particles:
+            p.meet_neighbors()
+
+        for t in range(NUM_ITERATIONS):
+            if t % PRINT_EVERY == 0:
+                self.print_update(t)
+            for particle in self.particles:
+                particle.update_position()
+                particle.update_velocity(particle.get_n_best())  # Uses neighbroing best instead of global.
+            self.set_global_p_best()
+        self.print_final_update()
+
+    def print_final_update(self):
+>>>>>>> 415794de1a222e2142bbdba9af19779bb228f29f
         print("\nFinal number of solutions checked: ", NUM_ITERATIONS * SWARM_SIZE)
         print("Best value found: ", self.g_best_val)
         print("Best position: ", self.g_best)
+
+    def print_update(self, t):
+        print(t, "/", NUM_ITERATIONS)
+        print("\nTotal number of solutions checked: ", t * SWARM_SIZE)
+        print("Best value found so far: ", self.g_best_val)
+        print("Best position found so far: ", self.g_best)
 
 
 # Schwefel function to evaluate a real-valued solution x
@@ -151,7 +217,8 @@ def evaluate(x):
 
 def main():
     swarm = Swarm()
-    swarm.optimize()
+    #swarm.global_optimize()
+    swarm.neighbor_optimize()
 
 
 if __name__ == '__main__':
