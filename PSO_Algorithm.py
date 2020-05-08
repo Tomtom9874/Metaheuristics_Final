@@ -22,18 +22,34 @@ LOWER_BOUND = -500  # bounds for Schwefel Function search space
 UPPER_BOUND = 500   # bounds for Schwefel Function search space
 
 # you may change anything below this line that you wish too -----------------------------------------------------
+"""
+Best Parameters (2D)
+SWARM_SIZE = 5              # number of particles in swarm
+NUM_ITERATIONS = 1300       # Number of iterations
+PHI_1 = 1.75                 # Local Weight
+PHI_2 = 1.75                 # Global Weight
+VELOCITY = 0.8               # Max Velocity
+Best solution = 296.10673923214495
+-----------------------------------------------------------
+Best Parameters (200D)
+SWARM_SIZE =  10            # number of particles in swarm
+NUM_ITERATIONS = 500        # Number of iterations
+PHI_1 = 0.8                 # Local Weight
+PHI_2 = 0.8                 # Global Weight
+VELOCITY = 10               # Max Velocity
+Best solution = 56,0119.57720359191
+"""
 
 # Parameters
-NUM_DIMENSIONS = 200        # number of dimensions of problem
-SWARM_SIZE = 10              # number of particles in swarm
-NUM_ITERATIONS = 500        # Number of iterations
-PHI_1 = .5                  # Local Weight
+NUM_DIMENSIONS = 2          # number of dimensions of problem
+SWARM_SIZE = 5              # number of particles in swarm
+NUM_ITERATIONS = 1800       # Number of iterations
+PHI_1 = 1.75                 # Local Weight
 PHI_2 = 0.1                 # Global Weight
-VELOCITY = 5                # Max Velocity
+VELOCITY = 0.8              # Max Velocity
 VEL_MAX = VELOCITY
 VEL_MIN = -VELOCITY
 PRINT_EVERY = 100           # Summary output every x iterations
-# Best Solution=75370.0126984382
 
 
 class Particle:
@@ -75,7 +91,7 @@ class Particle:
         for d in range(NUM_DIMENSIONS):
             new_position = self.position[d] + self.velocity[d]
             if new_position > UPPER_BOUND or new_position < LOWER_BOUND:
-                self.set_position(self.position[d] + self.velocity[d], d)
+                self.set_position(self.position[d] - self.velocity[d], d)
             else:
                 self.set_position(new_position, d)
 
@@ -104,7 +120,7 @@ class Swarm:
         plt.show()
 
     def optimize(self):
-        # plot_positions(t)
+        #self.plot_positions(t)
         for t in range(NUM_ITERATIONS):
             if t % PRINT_EVERY == 0:
                 print(t, "/", NUM_ITERATIONS)
@@ -118,7 +134,7 @@ class Swarm:
                 particle.update_velocity(self.g_best)
             self.set_global_p_best()
 
-            # plot_positions(t)
+            #self.plot_positions(t)
         print("\nFinal number of solutions checked: ", NUM_ITERATIONS * SWARM_SIZE)
         print("Best value found: ", self.g_best_val)
         print("Best position: ", self.g_best)
