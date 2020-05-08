@@ -225,17 +225,19 @@ def plot_solutions(solutions):
     plt.show()
 
 
-def genetic_algorithm_search(k=3, do_print=False, elite_k=5):
+def genetic_algorithm_search(k=3, do_print=False, elite_k=5, do_plot=False):
     population = initialize_population()
     summaries = []
     summary = summary_fitness(population, true_objective=True)
     summaries.append(summary)
-    plot_population(population)
+    if do_plot:
+        plot_population(population)
     for j in range(generations):
         mates = tournament_selection(population, k)
         offspring = breeding(mates, j)
         population = insert(population, offspring, k=elite_k)
-        plot_population(population)
+        if do_plot:
+            plot_population(population)
         summary = summary_fitness(population, true_objective=True)
         summaries.append(summary)
         min_val, mean_val, var_val = summary_fitness(population)  # check out the population at each generation
@@ -244,27 +246,27 @@ def genetic_algorithm_search(k=3, do_print=False, elite_k=5):
         else:
             if j % 250 == 0:
                 print(j, "/", generations)
-    plot_solutions(summaries)
+    if do_plot:
+        plot_solutions(summaries)
     print_best_sol_in_pop(population)
 
 
-#dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
-#population_size = 6  # size of GA population
-#generations = 1000  # number of GA generations
-#cross_over_rate = 0.9
-#mutation_rate = 0.2
+dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
+population_size = 6  # size of GA population
+generations = 1000  # number of GA generations
+cross_over_rate = 0.9
+mutation_rate = 0.2
 
-dimensions = 200  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
-
-# Parameters (Best found in parenthesis)
-population_size = 6  # size of GA population (300)
-generations = 5  # number of GA generations (1000)
-cross_over_rate = 0.9  # (0.9)
-mutation_rate = 0.25  # (0.25)
+# dimensions = 200  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
+# # Parameters (Best found in parenthesis)
+# population_size = 6  # size of GA population (300)
+# generations = 5  # number of GA generations (1000)
+# cross_over_rate = 0.9  # (0.9)
+# mutation_rate = 0.25  # (0.25)
 
 
 def main():
-    genetic_algorithm_search(elite_k=10)
+    genetic_algorithm_search(elite_k=10, do_plot=False)
     print("Global Best:", 67734.73069639696)
 
 
