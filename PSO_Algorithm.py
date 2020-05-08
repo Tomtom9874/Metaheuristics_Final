@@ -4,14 +4,13 @@
 
 
 # need some python libraries
-import copy
 import math
-import numpy as np
+import copy
 from random import Random
 
 
 # to setup a random number generator, we will specify a "seed" value
-seed = 12345
+seed = 12345  # (12345)
 myPRNG = Random(seed)
 
 # to get a random number between 0 and 1, write call this:             myPRNG.random()
@@ -23,21 +22,18 @@ upperBound = 500   # bounds for Schwefel Function search space
 
 # you may change anything below this line that you wish too -----------------------------------------------------
 
-# note: for the more experienced Python programmers, you might want to consider taking a
-# more object-oriented approach to the PSO implementation, i.e.:
-# a particle class with methods to initialize itself, and update its own velocity and position;
-# a swarm class with a method to iterates through all particles to call update functions, etc.
-
 # Parameters
-num_dimensions = 2      # number of dimensions of problem
+num_dimensions = 200      # number of dimensions of problem
 swarmSize = 10          # number of particles in swarm
-T = 1000                # Number of iterations
-phi1 = 0.1              # how large or small should this constant be?
-phi2 = 0.1              # how large or small should this constant be?
-VEL_MAX = 1.5           # what's a good max velocity?
-VEL_MIN = -1.5          # what's a good min velocity?
+T = 30000                # Number of iterations
+phi1 = .5              # Local Weight
+phi2 = 0.1              # Global Weight
+VELOCITY = .08
+VEL_MAX = VELOCITY
+VEL_MIN = -VELOCITY
+# Best Solution=80759.249764k
 
-      
+
 # Schwefel function to evaluate a real-valued solution x
 # note: the feasible space is an n-dimensional hypercube centered at the origin with side length = 2 * 500
 def evaluate(x):          
@@ -51,35 +47,22 @@ def evaluate(x):
 # the swarm will be represented as a list of positions, velocities, values, pbest, and pbest values
 
 pos = [[] for _ in range(swarmSize)]        # position of particles -- will be a list of lists; e.g.,
-                                            # for a 2D problem with 3 particles: [[17,4],[-100,2],[87,-1.2]]
-
-vel = [[] for _ in range(swarmSize)]        # velocity of particles -- will be a list of lists similar to the "pos" object
-                                            # note: pos[0] and vel[0] provides the position and velocity of particle 0;
-                                            # pos[1] and vel[1] provides the position and velocity of particle 1; and so on.
-
+vel = [[] for _ in range(swarmSize)]        # velocity of particles -- will be a list of lists
 
 curValue = []   # evaluation value of current position  -- will be a list of real values;
-                # curValue[0] provides the evaluation of particle 0 in it's current position
-pbest = []      # particles' best historical position -- will be a list of lists: pbest[0] provides the position of particle 0's best historical position
-pbestVal = []   # value of pbest position  -- will be a list of real values: pbestBal[0] provides the value of particle 0's pbest location
+pbest = []      # particles' best historical position -- will be a list of lists
+pbestVal = []   # value of pbest position  -- will be a list of real values
 
 
 # initialize the swarm randomly
 for i in range(swarmSize):
     for j in range(num_dimensions):
         pos[i].append(myPRNG.uniform(lowerBound, upperBound))   # assign random value between lower and upper bounds
-        vel[i].append(myPRNG.uniform(-1,1))                    # assign random value between -1 and 1 --- maybe these are good bounds?  maybe not...
-        
+        vel[i].append(myPRNG.uniform(-VELOCITY, VELOCITY))
     curValue.append(evaluate(pos[i]))                           # evaluate the current position
                                                  
-pbest = pos[:]                                                  # initialize pbest to the starting position
-pbestVal = curValue[:]                                          # initialize pbest to the starting position
-
-                                                                           
-# Currently missing several elements
-# e.g., velocity update function; velocity max limitations; position updates; dealing with infeasible space;
-# identifying the global best; main loop, stopping criterion, etc.
-pbestg = pbest[0]
+pbest = copy.deepcopy(pos)                                                  # initialize pbest to the starting position
+pbestVal = copy.deepcopy(curValue)                                          # initialize pbest to the starting position
 
 
 # calculates a new velocity for all particles of the swarm
@@ -88,77 +71,72 @@ def update_vel():
     r1 = myPRNG.random()
     r2 = myPRNG.random()
     # update the velocity
-    for ant in range(swarmSize):
+    for particle in range(swarmSize):
         for d in range(num_dimensions):
             # We need to assign the velocity by dimension rather than the whole thing at once.
-            local_distance = pbest[ant][d] - pos[ant][d]  # Distance from personal best position
-            global_distance = pbestg[d] - pos[ant][d]  # Distance from global best position
-            vel_new = vel[ant][d] + phi1 * r1 * local_distance + phi2 * r2 * global_distance
+            local_distance = pbest[particle][d] - pos[particle][d]  # Distance from personal best position
+            global_distance = p_best_g[d] - pos[particle][d]  # Distance from global best position
+            vel_new = vel[particle][d] + phi1 * r1 * local_distance + phi2 * r2 * global_distance
             # Make sure each updated velocity is within the MIN & MAX bounds
             if vel_new < VEL_MIN:
-                vel[ant][d] = VEL_MIN
+                vel[particle][d] = VEL_MIN
             elif vel_new > VEL_MAX:
-                vel[ant][d] = VEL_MAX
+                vel[particle][d] = VEL_MAX
             else:
-                vel[ant][d] = vel_new
+                vel[particle][d] = vel_new
 
 
 # updates the positions of all particles and returns a list of lists  
 def update_pos():
-    for ant in range(swarmSize):
+    for particle in range(swarmSize):
         for d in range(num_dimensions):
-            new_position = pos[ant][d] + vel[ant][d]
-            #
+            new_position = pos[particle][d] + vel[particle][d]
             if new_position > upperBound:
-                pos[ant][d] = pos[ant][d] - vel[ant][d]
+                pos[particle][d] = pos[particle][d] - vel[particle][d]
             elif new_position < lowerBound:
-                pos[ant][d] = pos[ant][d] - vel[ant][d]
+                pos[particle][d] = pos[particle][d] - vel[particle][d]
             else:
-                pos[ant][d] = new_position 
-                
+                pos[particle][d] = new_position
 
 
 # Find the global best position
-def find_global_p_best():
-    return_p = pbestg
+def set_global_p_best(p_best):
+    for particle in range(swarmSize):
+        if pbestVal[particle] < evaluate(p_best):
+            p_best = pbest[particle]
+    return p_best
+
+
+t = 0
+p_best_g = copy.deepcopy(pbest[0])
+p_best_g = set_global_p_best(p_best_g)
+
+while t < T:
+    print(t)
+
+    if t % 1000 == 0:
+        print(t, "/", T)
+        print("\nTotal number of solutions checked: ", t * swarmSize)
+        print("Best value found so far: ", evaluate(p_best_g))
+        print("Best position found so far: ", p_best_g)
+
     for ant in range(swarmSize):
-        if pbestVal[ant] < evaluate(pbestg):
-            return_p = pbest[ant]
-        
-    return return_p
+        curValue[ant] = evaluate(pos[ant])
+        # need to assert that the position is within the feasible region
+        # before adding it to the pbest list
+        if curValue[ant] < pbestVal[ant]:
+            pbest[ant] = pos[ant]
+            pbestVal[ant] = curValue[ant]
+
+    # update velocities and positions of all particles
+    update_vel()
+    print(p_best_g)
+    update_pos()
+    print(p_best_g)
+    p_best_g = set_global_p_best(p_best_g)
+    t += 1
 
 
-# Main loop
-def particle_swarm_optimization():
-    t = 0
-    while t < T:  
-        for ant in range(swarmSize):
-            curValue[ant] = evaluate(pos[ant])
-            # need to assert that the position is within the feasible region
-            # before adding it to the pbest list
-            if curValue[ant] < pbestVal[ant]:
-                pbest[ant] = pos[ant]
-                pbestVal[ant] = curValue[ant]
-
-        # update velocities and positions of all particles
-        pbestg = find_global_p_best()
-        update_vel()
-        update_pos()
-        t += 1
-        print("\nTotal number of solutions checked: ", t)
-        print("Best value found so far: ", evaluate(pbestg))
-        print("Best position found so far: ", find_global_p_best())
-
-    print("\nFinal number of solutions checked: ", t)
-    print("Best value found: ", evaluate(find_global_p_best()))
-    print("Best position: ", pbestg)
-
-
-def main():
-    particle_swarm_optimization()
-
-
-if __name__ == '__main__':
-    main()
-
-
+print("\nFinal number of solutions checked: ", t * swarmSize)
+print("Best value found: ", evaluate(p_best_g))
+print("Best position: ", p_best_g)
