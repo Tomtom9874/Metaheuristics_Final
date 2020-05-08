@@ -25,11 +25,11 @@ UPPER_BOUND = 500   # bounds for Schwefel Function search space
 """
 Best Parameters (2D)
 SWARM_SIZE = 5              # number of particles in swarm
-NUM_ITERATIONS = 1300       # Number of iterations
-PHI_1 = 1.75                 # Local Weight
-PHI_2 = 1.75                 # Global Weight
-VELOCITY = 0.8               # Max Velocity
-Best solution = 296.10673923214495
+NUM_ITERATIONS = 900        # Number of iterations
+PHI_1 = 1.9                 # Local Weight
+PHI_2 = 1.9                 # Global Weight
+VELOCITY = 25               # Max Velocity
+Best solution = 296.1099848292587
 -----------------------------------------------------------
 Best Parameters (200D)
 SWARM_SIZE =  10            # number of particles in swarm
@@ -41,28 +41,15 @@ Best solution = 56,0119.57720359191
 """
 
 # Parameters
-<<<<<<< HEAD
 NUM_DIMENSIONS = 2          # number of dimensions of problem
 SWARM_SIZE = 5              # number of particles in swarm
-NUM_ITERATIONS = 1800       # Number of iterations
-PHI_1 = 1.75                 # Local Weight
-PHI_2 = 0.1                 # Global Weight
-VELOCITY = 0.8              # Max Velocity
+NUM_ITERATIONS = 2000       # Number of iterations
+PHI_1 = 1.9                # Local Weight
+PHI_2 = 1.9                 # Global Weight
+VELOCITY = 25              # Max Velocity
 VEL_MAX = VELOCITY
 VEL_MIN = -VELOCITY
 PRINT_EVERY = 100           # Summary output every x iterations
-=======
-NUM_DIMENSIONS = 200        # number of dimensions of problem
-SWARM_SIZE = 10              # number of particles in swarm
-NUM_ITERATIONS = 500        # Number of iterations  (500)
-PHI_1 = 0.8                  # Local Weight  (0.8)
-PHI_2 = 0.1                 # Global Weight (0.1)
-VELOCITY = 3                # Max Velocity (5)
-VEL_MAX = VELOCITY
-VEL_MIN = -VELOCITY
-PRINT_EVERY = 100           # Summary output every x iterations
-# Best Solution=72293.80333221065
->>>>>>> 415794de1a222e2142bbdba9af19779bb228f29f
 
 
 class Particle:
@@ -152,16 +139,14 @@ class Swarm:
         plt.ylabel("y Coordinate")
         plt.show()
 
-<<<<<<< HEAD
+
     def optimize(self):
-        #self.plot_positions(t)
-=======
+        self.plot_positions(t)
+
     def global_optimize(self):
-        # plot_positions(t)
->>>>>>> 415794de1a222e2142bbdba9af19779bb228f29f
+        #plot_positions(t)
         for t in range(NUM_ITERATIONS):
             if t % PRINT_EVERY == 0:
-
                 self.print_update(t)
 
             # update velocities and positions of all particles
@@ -170,9 +155,7 @@ class Swarm:
                 particle.update_velocity(self.g_best)
             self.set_global_p_best()
 
-<<<<<<< HEAD
             #self.plot_positions(t)
-=======
             # plot_positions(t)
         self.print_final_update()
 
@@ -194,7 +177,6 @@ class Swarm:
         self.print_final_update()
 
     def print_final_update(self):
->>>>>>> 415794de1a222e2142bbdba9af19779bb228f29f
         print("\nFinal number of solutions checked: ", NUM_ITERATIONS * SWARM_SIZE)
         print("Best value found: ", self.g_best_val)
         print("Best position: ", self.g_best)
