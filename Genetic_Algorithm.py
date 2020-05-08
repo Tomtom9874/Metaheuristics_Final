@@ -18,9 +18,7 @@ Schwefel_upper_bound = 500   # bounds for Schwefel Function search space
 # you may change anything below this line that you wish too ------------------------------------------------------------
 
 # Student name(s): Tom Welborn, Nik Frost
-# Date: 5/1/2020
-
-# parameters moved to main function
+# Date: 5/1/2020d
 
 
 # create an continuous valued chromosome
@@ -115,13 +113,14 @@ def tournament_selection(pop, k):
     return mating_pool
 
 
-# function to mutate solutions
+# changes one bit in the list
 def mutate(x):
     random_position = myPRNG.randint(0, len(x))
     x[random_position] = myPRNG.uniform(Schwefel_lower_bound, Schwefel_upper_bound)
     return x
 
 
+# Mutates with odds: mutation_rate
 def probabilistic_mutate(chromosome):
     mutation_roll = myPRNG.random()
     if mutation_roll < mutation_rate:
@@ -129,6 +128,7 @@ def probabilistic_mutate(chromosome):
     return chromosome
 
 
+# Creates children from the current generation
 def breeding(mating_pool, current_generation):
     # the parents will be the first two individuals, then next two, then next two and so on
     
@@ -201,6 +201,7 @@ def print_best_sol_in_pop(pop):
     print("Best Evaluation:", sol[1])
 
 
+# Color is the evaluation, position is dimension 1 and 2
 def plot_population(pop):
     x = [p[0][0] for p in pop]
     y = [p[0][1] for p in pop]
@@ -212,6 +213,7 @@ def plot_population(pop):
     plt.show()
 
 
+# Problem cii
 def plot_solutions(solutions):
     means = [x[1] for x in solutions]
     variations = [x[2] for x in solutions]
@@ -225,6 +227,7 @@ def plot_solutions(solutions):
     plt.show()
 
 
+# k is pool size for tournament selection,  elite k is for elitism based preservation of parents.
 def genetic_algorithm_search(k=3, do_print=False, elite_k=5, do_plot=False):
     population = initialize_population()
     summaries = []
@@ -232,6 +235,7 @@ def genetic_algorithm_search(k=3, do_print=False, elite_k=5, do_plot=False):
     summaries.append(summary)
     if do_plot:
         plot_population(population)
+    # Updates the population generation by generation
     for j in range(generations):
         mates = tournament_selection(population, k)
         offspring = breeding(mates, j)
@@ -250,6 +254,7 @@ def genetic_algorithm_search(k=3, do_print=False, elite_k=5, do_plot=False):
         plot_solutions(summaries)
     print_best_sol_in_pop(population)
 
+# Parameters (Top Block is for 2D bottom is for 200D)
 
 dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
 population_size = 6  # size of GA population
@@ -265,9 +270,10 @@ mutation_rate = 0.2
 # mutation_rate = 0.25  # (0.25)
 
 
+# Performs Search, Global Best is manually updated.
 def main():
     genetic_algorithm_search(elite_k=10, do_plot=False)
-    print("Global Best:", 67734.73069639696)
+    print("Global Best (2D):", 67734.73069639696)
 
 
 if __name__ == '__main__':
