@@ -63,6 +63,7 @@ class Particle:
         self.n_best_val = float("inf")
         self.neighbors = None
 
+    # Getters
     def get_n_best(self):
         return self.n_best
 
@@ -78,12 +79,14 @@ class Particle:
     def get_value_best(self):
         return self.val_best
 
+    # Setters
     def set_position(self, position, index):
         self.position[index] = position
         if evaluate(self.position) < self.val_best:
             self.p_best = self.position[:]
             self.val_best = evaluate(self.p_best)
 
+    # Updates the particles velocity based on either best neighbor or global best.
     def update_velocity(self, global_best):
         r1 = myPRNG.random()
         r2 = myPRNG.random()
@@ -100,6 +103,7 @@ class Particle:
             else:
                 self.velocity[d] = vel_new
 
+    # Updates position based on velocity while remaining in bounds
     def update_position(self):
         for d in range(NUM_DIMENSIONS):
             new_position = self.position[d] + self.velocity[d]
@@ -141,19 +145,9 @@ class Swarm:
         plt.ylabel("y Coordinate")
         plt.show()
 
-
-<<<<<<< HEAD
-    def optimize(self):
-        self.plot_positions(t)
-
+    # Optimizes based on a global best
     def global_optimize(self):
-        #plot_positions(t)
-=======
-    def global_optimize(self):
-
         self.plot_positions(0)
-
->>>>>>> 5c2dbe9a943110935168f8fa66fab50d842488e1
         for t in range(NUM_ITERATIONS):
             if t % PRINT_EVERY == 0:
                 self.print_update(t)
@@ -162,15 +156,10 @@ class Swarm:
                 particle.update_position()
                 particle.update_velocity(self.g_best)
             self.set_global_p_best()
-
-            #self.plot_positions(t)
-<<<<<<< HEAD
-=======
-
->>>>>>> 5c2dbe9a943110935168f8fa66fab50d842488e1
-            # plot_positions(t)
+            # self.plot_positions(t)
         self.print_final_update()
 
+    # Optimizes with knowledge from neighbors
     def neighbor_optimize(self):
         # Set Neighbors
         self.particles[-1].set_neighbors([self.particles[0]])
@@ -189,11 +178,13 @@ class Swarm:
             self.set_global_p_best()
         self.print_final_update()
 
+    # Prints Ending summary
     def print_final_update(self):
         print("\nFinal number of solutions checked: ", NUM_ITERATIONS * SWARM_SIZE)
         print("Best value found: ", self.g_best_val)
         print("Best position: ", self.g_best)
 
+    # Prints Summary up to given generation
     def print_update(self, t):
         print(t, "/", NUM_ITERATIONS)
         print("\nTotal number of solutions checked: ", t * SWARM_SIZE)
@@ -213,7 +204,7 @@ def evaluate(x):
 def main():
     swarm = Swarm()
     swarm.global_optimize()  # Calls PSO with global best
-    #swarm.neighbor_optimize()  # Calls PSO with Neighbor best
+    # swarm.neighbor_optimize()  # Calls PSO with Neighbor best
 
 
 if __name__ == '__main__':
