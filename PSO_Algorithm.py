@@ -26,14 +26,14 @@ UPPER_BOUND = 500   # bounds for Schwefel Function search space
 # Parameters
 NUM_DIMENSIONS = 200        # number of dimensions of problem
 SWARM_SIZE = 10              # number of particles in swarm
-NUM_ITERATIONS = 500        # Number of iterations
-PHI_1 = .5                  # Local Weight
-PHI_2 = 0.1                 # Global Weight
-VELOCITY = 5                # Max Velocity
+NUM_ITERATIONS = 500        # Number of iterations  (500)
+PHI_1 = 0.8                  # Local Weight  (0.8)
+PHI_2 = 0.1                 # Global Weight (0.1)
+VELOCITY = 5                # Max Velocity (5)
 VEL_MAX = VELOCITY
 VEL_MIN = -VELOCITY
 PRINT_EVERY = 100           # Summary output every x iterations
-# Best Solution=75370.0126984382
+# Best Solution=72293.80333221065
 
 
 class Particle:
@@ -75,7 +75,7 @@ class Particle:
         for d in range(NUM_DIMENSIONS):
             new_position = self.position[d] + self.velocity[d]
             if new_position > UPPER_BOUND or new_position < LOWER_BOUND:
-                self.set_position(self.position[d] + self.velocity[d], d)
+                self.set_position(self.position[d] - self.velocity[d], d)
             else:
                 self.set_position(new_position, d)
 
