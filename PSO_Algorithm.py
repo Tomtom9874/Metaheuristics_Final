@@ -25,15 +25,15 @@ UPPER_BOUND = 500   # bounds for Schwefel Function search space
 
 # Parameters
 NUM_DIMENSIONS = 200        # number of dimensions of problem
-SWARM_SIZE = 5              # number of particles in swarm
+SWARM_SIZE = 10              # number of particles in swarm
 NUM_ITERATIONS = 500        # Number of iterations
 PHI_1 = .5                  # Local Weight
 PHI_2 = 0.1                 # Global Weight
 VELOCITY = 5                # Max Velocity
 VEL_MAX = VELOCITY
 VEL_MIN = -VELOCITY
-PRINT_EVERY = 500           # Summary output every x iterations
-# Best Solution=80759.249764k
+PRINT_EVERY = 100           # Summary output every x iterations
+# Best Solution=75370.0126984382
 
 
 class Particle:
