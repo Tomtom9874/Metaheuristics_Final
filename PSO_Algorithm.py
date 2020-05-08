@@ -7,6 +7,7 @@
 import math
 import copy
 from random import Random
+from matplotlib import pyplot as plt
 
 
 # to setup a random number generator, we will specify a "seed" value
@@ -23,12 +24,12 @@ upperBound = 500   # bounds for Schwefel Function search space
 # you may change anything below this line that you wish too -----------------------------------------------------
 
 # Parameters
-num_dimensions = 200      # number of dimensions of problem
-swarmSize = 10          # number of particles in swarm
-T = 30000                # Number of iterations
+num_dimensions = 2      # number of dimensions of problem
+swarmSize = 5         # number of particles in swarm
+T = 1                # Number of iterations
 phi1 = .5              # Local Weight
 phi2 = 0.1              # Global Weight
-VELOCITY = .08
+VELOCITY = 5
 VEL_MAX = VELOCITY
 VEL_MIN = -VELOCITY
 # Best Solution=80759.249764k
@@ -99,6 +100,15 @@ def update_pos():
                 pos[particle][d] = new_position
 
 
+def plot_positions(generation):
+    x = [i[0] for i in pos]
+    y = [i[1] for i in pos]
+    plt.scatter(x, y)
+    plt.title(str(generation) + " Generation")
+    plt.xlabel("x Coordinate")
+    plt.ylabel("y Coordinate")
+    plt.show()
+
 # Find the global best position
 def set_global_p_best(p_best):
     for particle in range(swarmSize):
@@ -110,10 +120,8 @@ def set_global_p_best(p_best):
 t = 0
 p_best_g = copy.deepcopy(pbest[0])
 p_best_g = set_global_p_best(p_best_g)
-
+#plot_positions(t)
 while t < T:
-    print(t)
-
     if t % 1000 == 0:
         print(t, "/", T)
         print("\nTotal number of solutions checked: ", t * swarmSize)
@@ -130,11 +138,12 @@ while t < T:
 
     # update velocities and positions of all particles
     update_vel()
-    print(p_best_g)
     update_pos()
-    print(p_best_g)
     p_best_g = set_global_p_best(p_best_g)
+
     t += 1
+    #plot_positions(t)
+
 
 
 print("\nFinal number of solutions checked: ", t * swarmSize)
