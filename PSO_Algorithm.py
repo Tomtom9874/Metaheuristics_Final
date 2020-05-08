@@ -52,6 +52,7 @@ VEL_MIN = -VELOCITY
 PRINT_EVERY = 100           # Summary output every x iterations
 
 
+# Each particle is at a certain position and velocity and also holds the best position it has visited
 class Particle:
     def __init__(self):
         self.position = [myPRNG.uniform(LOWER_BOUND, UPPER_BOUND) for _ in range(NUM_DIMENSIONS)]
@@ -116,6 +117,7 @@ class Particle:
             self.n_best_val = evaluate(n_best)
 
 
+# This Holds all of the particles
 class Swarm:
     def __init__(self):
         self.particles = [Particle() for _ in range(SWARM_SIZE)]
@@ -140,6 +142,7 @@ class Swarm:
         plt.show()
 
 
+<<<<<<< HEAD
     def optimize(self):
         self.plot_positions(t)
 
@@ -181,6 +184,8 @@ class Swarm:
                 self.print_update(t)
             for particle in self.particles:
                 particle.update_position()
+                particle.update_velocity(particle.get_n_best())  # Uses neighboring best instead of global.
+                particle.meet_neighbors()
             self.set_global_p_best()
         self.print_final_update()
 
@@ -207,6 +212,8 @@ def evaluate(x):
 
 def main():
     swarm = Swarm()
+    swarm.global_optimize()  # Calls PSO with global best
+    #swarm.neighbor_optimize()  # Calls PSO with Neighbor best
 
 
 if __name__ == '__main__':
