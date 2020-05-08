@@ -25,11 +25,11 @@ UPPER_BOUND = 500   # bounds for Schwefel Function search space
 """
 Best Parameters (2D)
 SWARM_SIZE = 5              # number of particles in swarm
-NUM_ITERATIONS = 1300       # Number of iterations
-PHI_1 = 1.75                 # Local Weight
-PHI_2 = 1.75                 # Global Weight
-VELOCITY = 0.8               # Max Velocity
-Best solution = 296.10673923214495
+NUM_ITERATIONS = 900        # Number of iterations
+PHI_1 = 1.9                 # Local Weight
+PHI_2 = 1.9                 # Global Weight
+VELOCITY = 25               # Max Velocity
+Best solution = 296.1099848292587
 -----------------------------------------------------------
 Best Parameters (200D)
 SWARM_SIZE =  10            # number of particles in swarm
@@ -43,10 +43,10 @@ Best solution = 56,0119.57720359191
 # Parameters
 NUM_DIMENSIONS = 2          # number of dimensions of problem
 SWARM_SIZE = 5              # number of particles in swarm
-NUM_ITERATIONS = 1800       # Number of iterations
-PHI_1 = 1.75                 # Local Weight
-PHI_2 = 0.1                 # Global Weight
-VELOCITY = 0.8              # Max Velocity
+NUM_ITERATIONS = 2000       # Number of iterations
+PHI_1 = 1.9                # Local Weight
+PHI_2 = 1.9                 # Global Weight
+VELOCITY = 25              # Max Velocity
 VEL_MAX = VELOCITY
 VEL_MIN = -VELOCITY
 PRINT_EVERY = 100           # Summary output every x iterations
@@ -142,10 +142,18 @@ class Swarm:
         plt.show()
 
 
+<<<<<<< HEAD
+    def optimize(self):
+        self.plot_positions(t)
+
+    def global_optimize(self):
+        #plot_positions(t)
+=======
     def global_optimize(self):
 
         self.plot_positions(0)
 
+>>>>>>> 5c2dbe9a943110935168f8fa66fab50d842488e1
         for t in range(NUM_ITERATIONS):
             if t % PRINT_EVERY == 0:
                 self.print_update(t)
@@ -156,7 +164,10 @@ class Swarm:
             self.set_global_p_best()
 
             #self.plot_positions(t)
+<<<<<<< HEAD
+=======
 
+>>>>>>> 5c2dbe9a943110935168f8fa66fab50d842488e1
             # plot_positions(t)
         self.print_final_update()
 
