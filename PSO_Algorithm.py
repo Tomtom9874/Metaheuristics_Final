@@ -28,14 +28,15 @@ NUM_DIMENSIONS = 200        # number of dimensions of problem
 SWARM_SIZE = 10              # number of particles in swarm
 NUM_ITERATIONS = 500        # Number of iterations  (500)
 PHI_1 = 0.8                  # Local Weight  (0.8)
-PHI_2 = 0.1                 # Global Weight (0.1)
-VELOCITY = 3                # Max Velocity (5)
+PHI_2 = 0.3                 # Global Weight (0.1)
+VELOCITY = 20                # Max Velocity (5)
 VEL_MAX = VELOCITY
 VEL_MIN = -VELOCITY
 PRINT_EVERY = 100           # Summary output every x iterations
 # Best Solution=72293.80333221065
 
 
+# Each particle is at a certain position and velocity and also holds the best position it has visited
 class Particle:
     def __init__(self):
         self.position = [myPRNG.uniform(LOWER_BOUND, UPPER_BOUND) for _ in range(NUM_DIMENSIONS)]
@@ -100,6 +101,7 @@ class Particle:
             self.n_best_val = evaluate(n_best)
 
 
+# This Holds all of the particles
 class Swarm:
     def __init__(self):
         self.particles = [Particle() for _ in range(SWARM_SIZE)]
@@ -124,7 +126,6 @@ class Swarm:
         plt.show()
 
     def global_optimize(self):
-        # plot_positions(t)
         for t in range(NUM_ITERATIONS):
             if t % PRINT_EVERY == 0:
 
@@ -134,9 +135,8 @@ class Swarm:
             for particle in self.particles:
                 particle.update_position()
                 particle.update_velocity(self.g_best)
-            self.set_global_p_best()
 
-            # plot_positions(t)
+            self.set_global_p_best()
         self.print_final_update()
 
     def neighbor_optimize(self):
@@ -152,7 +152,8 @@ class Swarm:
                 self.print_update(t)
             for particle in self.particles:
                 particle.update_position()
-                particle.update_velocity(particle.get_n_best())  # Uses neighbroing best instead of global.
+                particle.update_velocity(particle.get_n_best())  # Uses neighboring best instead of global.
+                particle.meet_neighbors()
             self.set_global_p_best()
         self.print_final_update()
 
@@ -179,8 +180,8 @@ def evaluate(x):
 
 def main():
     swarm = Swarm()
-    #swarm.global_optimize()
-    swarm.neighbor_optimize()
+    #swarm.global_optimize()  # Calls PSO with global best
+    swarm.neighbor_optimize()  # Calls PSO with Neighbor best
 
 
 if __name__ == '__main__':
