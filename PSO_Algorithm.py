@@ -5,7 +5,6 @@
 
 # need some python libraries
 import math
-import copy
 from random import Random
 from matplotlib import pyplot as plt
 
@@ -59,8 +58,8 @@ class Particle:
         self.velocity = [myPRNG.uniform(-VELOCITY, VELOCITY) for _ in range(NUM_DIMENSIONS)]
         self.p_best = self.position[:]  # Personal best position seen
         self.val_best = evaluate(self.p_best)
-        self.n_best = None  # Best position found in neighborhood.
-        self.n_best_val = float("inf")
+        self.n_best = self.p_best[:] # Best position found in neighborhood.
+        self.n_best_val = evaluate(self.n_best)
         self.neighbors = None
 
     # Getters
@@ -85,6 +84,9 @@ class Particle:
         if evaluate(self.position) < self.val_best:
             self.p_best = self.position[:]
             self.val_best = evaluate(self.p_best)
+        if evaluate(self.position) < self.n_best_val:
+            self.n_best = self.p_best
+            self.n_best_val = self.val_best
 
     # Updates the particles velocity based on either best neighbor or global best.
     def update_velocity(self, global_best):
@@ -114,11 +116,12 @@ class Particle:
 
     def meet_neighbors(self):
         # Gets the lowest evaluation of all the neighbors.
-        neighbor_positions = [p.get_p_best() for p in self.neighbors]
+        neighbor_positions = [p.get_n_best() for p in self.neighbors]
         n_best = min(neighbor_positions, key=lambda x: evaluate(x))
         if evaluate(n_best) < self.n_best_val:
             self.n_best = n_best
             self.n_best_val = evaluate(n_best)
+
 
 
 # This Holds all of the particles
@@ -163,7 +166,7 @@ class Swarm:
     def neighbor_optimize(self):
         # Set Neighbors
         self.particles[-1].set_neighbors([self.particles[0]])
-        for p in range(0, len(self.particles) - 1):
+        for p in range(len(self.particles) - 1):
             self.particles[p].set_neighbors([self.particles[p + 1]])
         for p in self.particles:
             p.meet_neighbors()
@@ -203,8 +206,8 @@ def evaluate(x):
 
 def main():
     swarm = Swarm()
-    swarm.global_optimize()  # Calls PSO with global best
-    # swarm.neighbor_optimize()  # Calls PSO with Neighbor best
+    #swarm.global_optimize()  # Calls PSO with global best
+    swarm.neighbor_optimize()  # Calls PSO with Neighbor best
 
 
 if __name__ == '__main__':
