@@ -212,6 +212,7 @@ def plot_population(pop):
     plt.show()
 
 
+# Problem cii
 def plot_solutions(solutions):
     means = [x[1] for x in solutions]
     variations = [x[2] for x in solutions]
