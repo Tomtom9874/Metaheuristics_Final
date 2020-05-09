@@ -233,15 +233,23 @@ def genetic_algorithm_search(k=3, do_print=False, elite_k=5, do_plot=False):
     summaries = []
     summary = summary_fitness(population, true_objective=True)
     summaries.append(summary)
+<<<<<<< HEAD
+    #plot_population(population)
+=======
     if do_plot:
         plot_population(population)
     # Updates the population generation by generation
+>>>>>>> 642a71dd85ae4906dc5970f544170e1a5a4a9f31
     for j in range(generations):
         mates = tournament_selection(population, k)
         offspring = breeding(mates, j)
         population = insert(population, offspring, k=elite_k)
+<<<<<<< HEAD
+        #plot_population(population)
+=======
         if do_plot:
             plot_population(population)
+>>>>>>> 642a71dd85ae4906dc5970f544170e1a5a4a9f31
         summary = summary_fitness(population, true_objective=True)
         summaries.append(summary)
         min_val, mean_val, var_val = summary_fitness(population)  # check out the population at each generation
@@ -256,6 +264,21 @@ def genetic_algorithm_search(k=3, do_print=False, elite_k=5, do_plot=False):
 
 # Parameters (Top Block is for 2D bottom is for 200D)
 
+<<<<<<< HEAD
+#dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
+#population_size = 6  # size of GA population
+#generations = 1000  # number of GA generations
+#cross_over_rate = 0.9
+#mutation_rate = 0.34
+
+dimensions = 200  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
+# 2D Best sol = 181.51573693026376
+# Parameters (Best found in parenthesis)
+population_size = 300  # size of GA population (300)
+generations = 200  # number of GA generations (1000)
+cross_over_rate = 0.9  # (0.9)
+mutation_rate = 0.25  # (0.25)
+=======
 dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
 population_size = 6  # size of GA population
 generations = 1000  # number of GA generations
@@ -268,6 +291,7 @@ mutation_rate = 0.2
 # generations = 5  # number of GA generations (1000)
 # cross_over_rate = 0.9  # (0.9)
 # mutation_rate = 0.25  # (0.25)
+>>>>>>> 642a71dd85ae4906dc5970f544170e1a5a4a9f31
 
 
 # Performs Search, Global Best is manually updated.

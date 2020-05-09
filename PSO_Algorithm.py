@@ -40,12 +40,12 @@ Best solution = 56,0119.57720359191
 """
 
 # Parameters
-NUM_DIMENSIONS = 2          # number of dimensions of problem
+NUM_DIMENSIONS = 200        # number of dimensions of problem
 SWARM_SIZE = 5              # number of particles in swarm
-NUM_ITERATIONS = 2000       # Number of iterations
-PHI_1 = 1.9                # Local Weight
-PHI_2 = 1.9                 # Global Weight
-VELOCITY = 25              # Max Velocity
+NUM_ITERATIONS = 4000       # Number of iterations
+PHI_1 = 0.95                # Local Weight
+PHI_2 = 0.95                # Global Weight
+VELOCITY = 12                # Max Velocity
 VEL_MAX = VELOCITY
 VEL_MIN = -VELOCITY
 PRINT_EVERY = 100           # Summary output every x iterations
@@ -146,11 +146,18 @@ class Swarm:
         plt.title(str(generation) + " Generation")
         plt.xlabel("x Coordinate")
         plt.ylabel("y Coordinate")
-        plt.show()
+        #plt.show()
 
+    def optimize(self):
+        self.plot_positions(t)
+
+    def global_optimize(self):
+        plot_positions(t)
+        
     # Optimizes based on a global best
     def global_optimize(self):
         self.plot_positions(0)
+
         for t in range(NUM_ITERATIONS):
             if t % PRINT_EVERY == 0:
                 self.print_update(t)
@@ -159,6 +166,8 @@ class Swarm:
                 particle.update_position()
                 particle.update_velocity(self.g_best)
             self.set_global_p_best()
+            #self.plot_positions(t)
+            # plot_positions(t)
             # self.plot_positions(t)
         self.print_final_update()
 
@@ -206,6 +215,7 @@ def evaluate(x):
 
 def main():
     swarm = Swarm()
+    #warm.global_optimize()  # Calls PSO with global best
     #swarm.global_optimize()  # Calls PSO with global best
     swarm.neighbor_optimize()  # Calls PSO with Neighbor best
 
