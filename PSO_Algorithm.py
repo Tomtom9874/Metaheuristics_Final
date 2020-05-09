@@ -148,24 +148,16 @@ class Swarm:
         plt.ylabel("y Coordinate")
         #plt.show()
 
-<<<<<<< HEAD
-
     def optimize(self):
         self.plot_positions(t)
 
     def global_optimize(self):
         plot_positions(t)
         
-=======
     # Optimizes based on a global best
->>>>>>> 642a71dd85ae4906dc5970f544170e1a5a4a9f31
     def global_optimize(self):
         self.plot_positions(0)
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 642a71dd85ae4906dc5970f544170e1a5a4a9f31
         for t in range(NUM_ITERATIONS):
             if t % PRINT_EVERY == 0:
                 self.print_update(t)
@@ -174,14 +166,9 @@ class Swarm:
                 particle.update_position()
                 particle.update_velocity(self.g_best)
             self.set_global_p_best()
-<<<<<<< HEAD
-
             #self.plot_positions(t)
-
             # plot_positions(t)
-=======
             # self.plot_positions(t)
->>>>>>> 642a71dd85ae4906dc5970f544170e1a5a4a9f31
         self.print_final_update()
 
     # Optimizes with knowledge from neighbors
@@ -228,11 +215,8 @@ def evaluate(x):
 
 def main():
     swarm = Swarm()
-<<<<<<< HEAD
     swarm.global_optimize()  # Calls PSO with global best
-=======
     #swarm.global_optimize()  # Calls PSO with global best
->>>>>>> 642a71dd85ae4906dc5970f544170e1a5a4a9f31
     swarm.neighbor_optimize()  # Calls PSO with Neighbor best
 
 
