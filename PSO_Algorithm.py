@@ -215,7 +215,7 @@ def evaluate(x):
 
 def main():
     swarm = Swarm()
-    swarm.global_optimize()  # Calls PSO with global best
+    #warm.global_optimize()  # Calls PSO with global best
     #swarm.global_optimize()  # Calls PSO with global best
     swarm.neighbor_optimize()  # Calls PSO with Neighbor best
 
