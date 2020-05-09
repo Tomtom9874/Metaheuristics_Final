@@ -18,9 +18,7 @@ Schwefel_upper_bound = 500   # bounds for Schwefel Function search space
 # you may change anything below this line that you wish too ------------------------------------------------------------
 
 # Student name(s): Tom Welborn, Nik Frost
-# Date: 5/1/2020
-
-# parameters moved to main function
+# Date: 5/1/2020d
 
 
 # create an continuous valued chromosome
@@ -115,13 +113,14 @@ def tournament_selection(pop, k):
     return mating_pool
 
 
-# function to mutate solutions
+# changes one bit in the list
 def mutate(x):
     random_position = myPRNG.randint(0, len(x))
     x[random_position] = myPRNG.uniform(Schwefel_lower_bound, Schwefel_upper_bound)
     return x
 
 
+# Mutates with odds: mutation_rate
 def probabilistic_mutate(chromosome):
     mutation_roll = myPRNG.random()
     if mutation_roll < mutation_rate:
@@ -129,6 +128,7 @@ def probabilistic_mutate(chromosome):
     return chromosome
 
 
+# Creates children from the current generation
 def breeding(mating_pool, current_generation):
     # the parents will be the first two individuals, then next two, then next two and so on
     
@@ -201,6 +201,7 @@ def print_best_sol_in_pop(pop):
     print("Best Evaluation:", sol[1])
 
 
+# Color is the evaluation, position is dimension 1 and 2
 def plot_population(pop):
     x = [p[0][0] for p in pop]
     y = [p[0][1] for p in pop]
@@ -226,17 +227,29 @@ def plot_solutions(solutions):
     plt.show()
 
 
-def genetic_algorithm_search(k=3, do_print=False, elite_k=5):
+# k is pool size for tournament selection,  elite k is for elitism based preservation of parents.
+def genetic_algorithm_search(k=3, do_print=False, elite_k=5, do_plot=False):
     population = initialize_population()
     summaries = []
     summary = summary_fitness(population, true_objective=True)
     summaries.append(summary)
+<<<<<<< HEAD
     #plot_population(population)
+=======
+    if do_plot:
+        plot_population(population)
+    # Updates the population generation by generation
+>>>>>>> 642a71dd85ae4906dc5970f544170e1a5a4a9f31
     for j in range(generations):
         mates = tournament_selection(population, k)
         offspring = breeding(mates, j)
         population = insert(population, offspring, k=elite_k)
+<<<<<<< HEAD
         #plot_population(population)
+=======
+        if do_plot:
+            plot_population(population)
+>>>>>>> 642a71dd85ae4906dc5970f544170e1a5a4a9f31
         summary = summary_fitness(population, true_objective=True)
         summaries.append(summary)
         min_val, mean_val, var_val = summary_fitness(population)  # check out the population at each generation
@@ -245,10 +258,13 @@ def genetic_algorithm_search(k=3, do_print=False, elite_k=5):
         else:
             if j % 250 == 0:
                 print(j, "/", generations)
-    plot_solutions(summaries)
+    if do_plot:
+        plot_solutions(summaries)
     print_best_sol_in_pop(population)
 
+# Parameters (Top Block is for 2D bottom is for 200D)
 
+<<<<<<< HEAD
 #dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
 #population_size = 6  # size of GA population
 #generations = 1000  # number of GA generations
@@ -262,11 +278,26 @@ population_size = 300  # size of GA population (300)
 generations = 200  # number of GA generations (1000)
 cross_over_rate = 0.9  # (0.9)
 mutation_rate = 0.25  # (0.25)
+=======
+dimensions = 2  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
+population_size = 6  # size of GA population
+generations = 1000  # number of GA generations
+cross_over_rate = 0.9
+mutation_rate = 0.2
+
+# dimensions = 200  # set dimensions for Schwefel Function search space (should either be 2 or 200 for HM #5)
+# # Parameters (Best found in parenthesis)
+# population_size = 6  # size of GA population (300)
+# generations = 5  # number of GA generations (1000)
+# cross_over_rate = 0.9  # (0.9)
+# mutation_rate = 0.25  # (0.25)
+>>>>>>> 642a71dd85ae4906dc5970f544170e1a5a4a9f31
 
 
+# Performs Search, Global Best is manually updated.
 def main():
-    genetic_algorithm_search(elite_k=10)
-    print("Global Best:", 67734.73069639696)
+    genetic_algorithm_search(elite_k=10, do_plot=False)
+    print("Global Best (2D):", 67734.73069639696)
 
 
 if __name__ == '__main__':
